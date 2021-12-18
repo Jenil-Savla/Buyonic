@@ -68,7 +68,7 @@ REST_FRAMEWORK = { 'DEFAULT_AUTHENTICATION_CLASSES' : [
 ]
 }
 
-AUTH_USER_MODEL = 'accounts.MyUser'
+AUTH_USER_MODEL = 'Buyonic.accounts.MyUser'
 
 ROOT_URLCONF = 'Buyonic.urls'
 
