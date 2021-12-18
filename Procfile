@@ -1,1 +1,1 @@
-web: gunicorn Buyonic.wsgi
+web: gunicorn Buyonic.wsgi --log-file -
