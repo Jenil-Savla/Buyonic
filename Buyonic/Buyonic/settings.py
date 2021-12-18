@@ -25,7 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-l5l#^#-fv+n7v62_jm^7((neb4@x4e4tz+=r$zt#_0gq+8kd68' #env('SECRET_KEY')
+SECRET_KEY = 'django-insecure-l5l#^#-fv+n7v62_jm^7((neb4@x4e4tz+=r$zt#_0gq+8kd68'
+#SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -65,7 +66,9 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = { 'DEFAULT_AUTHENTICATION_CLASSES' : [
 		'rest_framework.authentication.TokenAuthentication' ,
-]
+],
+'DEFAULT_PAGINATION_CLASS' : 'rest_framework.pagination.PageNumberPagination',
+		'PAGE_SIZE' : 10,
 }
 
 AUTH_USER_MODEL = 'accounts.MyUser'
@@ -141,6 +144,9 @@ USE_TZ = True
 #PROJECT_ROOT   =   os.path.join(os.path.abspath(__file__))
 STATIC_ROOT  =   os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
+
+MEDIA_ROOT  =   os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
