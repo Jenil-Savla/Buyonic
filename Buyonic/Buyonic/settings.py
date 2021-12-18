@@ -48,8 +48,8 @@ INSTALLED_APPS = [
     'drf_yasg',
 
     #myapps
-    'Buyonic.accounts',
-    'Buyonic.catalogue',
+    'accounts',
+    'catalogue',
 ]
 
 MIDDLEWARE = [
