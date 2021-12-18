@@ -34,6 +34,8 @@ class MyUser(AbstractUser):
     contact = models.BigIntegerField(unique = True,null = True)
     address = models.TextField(max_length = 100)
 
+    refund_balance = models.IntegerField(default = 0)
+
     is_manufacturer = models.BooleanField(default = False)
 
     USERNAME_FIELD = 'email'
