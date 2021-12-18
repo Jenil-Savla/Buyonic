@@ -4,7 +4,7 @@ from .models import MyUser
 from .serializers import RegisterSerializer, LoginSerializer
 
 from rest_framework.generics import GenericAPIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 
@@ -41,9 +41,11 @@ class LoginAPI(GenericAPIView):
 
 class LogoutAPI(GenericAPIView):
 
+    permission_classes = [IsAuthenticated,]
+
     queryset = MyUser.objects.all()
 
     def get(self,request,format=None):
         request.user.auth_token.delete()
-        return Response(status = status.HTTP_200_OK)
+        return Response({'logout':'logout successful'},status = status.HTTP_200_OK)
 
