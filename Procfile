@@ -1,1 +1,1 @@
-web: gunicorn --pythonpath Buyonic Buyonic.wsgi
+web: gunicorn Buyonic.wsgi
