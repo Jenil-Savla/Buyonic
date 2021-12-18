@@ -1,1 +1,1 @@
-web: gunicorn --pythonpath Buyonic Buyonic.wsgi --log-file -
+web: gunicorn --chdir Buyonic Buyonic.wsgi --log-file -
