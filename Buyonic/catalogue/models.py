@@ -4,6 +4,9 @@ from accounts.models import MyUser
 class Category(models.Model):
     category = models.CharField(max_length = 25)
 
+    def __str__(self):
+        return self.category
+
 class Product(models.Model):
     manufacturer = models.ForeignKey(MyUser, on_delete = models.CASCADE)
     category = models.ForeignKey(Category,on_delete = models.CASCADE)
@@ -19,4 +22,4 @@ class Product(models.Model):
         return self.name
 
     class Meta:
-        ordering = ['cost']
+        ordering = ['trend']

@@ -23,7 +23,7 @@ class IsManufacturer(permissions.BasePermission):
 				return obj.user == request.user
 
 
-class ProductList(mixins.ListModelMixin,GenericAPIView):
+class ProductList(GenericAPIView):
 
     serializer_class = ProductSerializer
     pagination_class = PageNumberPagination
@@ -34,5 +34,13 @@ class ProductList(mixins.ListModelMixin,GenericAPIView):
         serializer = self.serializer_class()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class ProductCreate:
+class ProductDetails(GenericAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated,]
+    def get(self,request,pk):
+        product = Product.objects.get(id = pk)
+        serializer = ProductSerializer(instance=product)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class Order(GenericAPIView):
     pass
