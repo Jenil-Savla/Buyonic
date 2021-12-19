@@ -13,7 +13,6 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from rest_framework.response import Response
 
-from django.shortcuts import redirect
 '''
 def send_email(data):
 		email = EmailMessage(subject = data['subject'], body = data['email_body'], to = [data['to']])

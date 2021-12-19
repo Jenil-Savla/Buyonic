@@ -27,6 +27,7 @@ class ClientOrderSerializer(serializers.ModelSerializer):
         fields = ['quantity',]
 
 class NotifySerializer(serializers.ModelSerializer):
+    product = ProductSerializer
     class Meta:
         model = Notify
         fields = '__all__'
