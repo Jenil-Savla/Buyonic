@@ -2,13 +2,22 @@ from django.contrib.auth import authenticate,login
 
 from .models import MyUser
 from .serializers import RegisterSerializer, LoginSerializer
-
+from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 
+from django.core.mail import EmailMessage
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
 from rest_framework.response import Response
+
+from django.shortcuts import redirect
+
+def send_email(data):
+		email = EmailMessage(subject = data['subject'], body = data['email_body'], to = [data['to']])
+		email.send()
 
 class RegisterAPI(GenericAPIView):
     
@@ -21,6 +30,13 @@ class RegisterAPI(GenericAPIView):
         serializer.is_valid(raise_exception = True)
         user = serializer.save()
 		
+        token = Token.objects.create(user=user)
+        current_site = get_current_site(request).domain
+        relative_link = reverse('email-verify')
+        link = 'http://'+current_site+relative_link+'?token='+ token.key
+        data = {'email_body': f'Use this link to get verified {link}. If you are a manufacturer then please mail us. We will contact you regarding same.', 'subject':'Email Verification', 'to' : user.email}
+        send_email(data)
+
         return Response(serializer.data
 		,status=status.HTTP_201_CREATED)
 
@@ -49,3 +65,15 @@ class LogoutAPI(GenericAPIView):
         request.user.auth_token.delete()
         return Response({'logout':'logout successful'},status = status.HTTP_200_OK)
 
+class EmailVerify(GenericAPIView):
+    def get(self,request):
+        token = request.GET.get('token')
+        user = MyUser.objects.filter(auth_token = token).first()
+        user.is_verified = True
+        user.save()
+        return Response('Account Verified', status=status.HTTP_200_OK)
+    
+class Waiting(GenericAPIView):
+    permission_classes = [IsAuthenticated,]
+    def get(self,request):
+        return Response({'verified':request.user.is_verified})

@@ -30,10 +30,10 @@ class ProductList(GenericAPIView):
     serializer_class = ProductSerializer
     pagination_class = PageNumberPagination
     permission_classes = [IsAuthenticated,]
-    querset = Product.objects.all()
 
     def get(self,request):
-        serializer = self.serializer_class()
+        product = Product.objects.all()
+        serializer = self.serializer_class(product,many = True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class ProductDetails(GenericAPIView):

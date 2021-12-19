@@ -35,6 +35,7 @@ class MyUser(AbstractUser):
     address = models.TextField(max_length = 100)
 
     refund_balance = models.IntegerField(default = 0)
+    is_verified = models.BooleanField(default = False)
 
     is_manufacturer = models.BooleanField(default = False)
 

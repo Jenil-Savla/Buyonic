@@ -42,6 +42,7 @@ class ClientOrder(models.Model):
         total_cost = int(self.quantity) * int(self.product.cost) + self.shipping_charge
         if total_cost >= int(self.user.refund_balance):
             total_cost -= int(self.user.refund_balance)
+            self.user.refund_balance =0
         return int(total_cost)
 
 class Notify(models.Model):
