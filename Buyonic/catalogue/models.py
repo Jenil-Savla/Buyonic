@@ -13,6 +13,7 @@ class Product(models.Model):
     stock_status = models.BooleanField(default = True)
     created_on = models.DateTimeField(auto_now_add = True)
     photo = models.ImageField(blank = True)
+    trend = models.IntegerField(default = 0)
 
     def __str__(self):
         return self.name
