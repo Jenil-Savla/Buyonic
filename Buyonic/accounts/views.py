@@ -31,12 +31,12 @@ class RegisterAPI(GenericAPIView):
         user = serializer.save()
 		
         token = Token.objects.create(user=user)
-        '''
+        
         current_site = get_current_site(request).domain
         relative_link = reverse('email-verify')
         link = 'http://'+current_site+relative_link+'?token='+ token.key
         data = {'email_body': f'Use this link to get verified {link}. If you are a manufacturer then please mail us. We will contact you regarding same.', 'subject':'Email Verification', 'to' : user.email}
-        send_email(data)'''
+        send_email(data)
 
         return Response({'token' : token.key}
 		,status=status.HTTP_201_CREATED)
