@@ -38,7 +38,7 @@ class RegisterAPI(GenericAPIView):
         data = {'email_body': f'Use this link to get verified {link}. If you are a manufacturer then please mail us. We will contact you regarding same.', 'subject':'Email Verification', 'to' : user.email}
         send_email(data)'''
 
-        return Response(serializer.data
+        return Response({'token' : token.key}
 		,status=status.HTTP_201_CREATED)
 
 
