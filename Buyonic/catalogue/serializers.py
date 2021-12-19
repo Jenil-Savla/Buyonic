@@ -9,7 +9,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = CategorySerializer
+    category = CategorySerializer()
     class Meta:
         model = Product
         fields = '__all__'
@@ -24,10 +24,10 @@ class ClientOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClientOrder
-        fields = ['quantity',]
+        fields = ['product','quantity',]
 
 class NotifySerializer(serializers.ModelSerializer):
-    product = ProductSerializer
+    product = ProductSerializer()
     class Meta:
         model = Notify
         fields = '__all__'

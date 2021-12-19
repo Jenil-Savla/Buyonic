@@ -31,7 +31,7 @@ class MyUser(AbstractUser):
 
     email = models.EmailField(("Email Address"),primary_key=True)
     name = models.CharField(max_length=25)
-    contact = models.BigIntegerField(unique = True,null = True,max_length=10)
+    contact = models.BigIntegerField(unique = True,null = True)
     address = models.TextField(max_length = 100, null=True)
     city = models.CharField(max_length=25)
     state = models.CharField(max_length=25)

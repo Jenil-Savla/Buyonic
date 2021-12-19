@@ -57,3 +57,9 @@ class Notify(models.Model):
 
     class Meta:
         verbose_name_plural = "Notifications"
+
+class Transaction(models.Model):
+    final_payment = models.IntegerField()
+
+    def __str__(self):
+        return self.id
