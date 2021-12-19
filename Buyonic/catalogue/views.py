@@ -1,7 +1,9 @@
 from drf_yasg.openapi import Response
+from rest_framework.serializers import Serializer
 
-from .models import Product
-from .serializers import ProductSerializer
+from accounts.models import MyUser
+from .models import Product,ClientOrder,Notify
+from .serializers import ProductSerializer,ClientOrderSerializer,NotifySerializer
 
 from rest_framework.generics import GenericAPIView
 from rest_framework import mixins,status
@@ -42,5 +44,17 @@ class ProductDetails(GenericAPIView):
         serializer = ProductSerializer(instance=product)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class Order(GenericAPIView):
-    pass
+class OrderForm(GenericAPIView):
+
+    serializer_class = ClientOrderSerializer
+    permission_classes = [IsAuthenticated,]
+
+    def post(self,request,pk):
+        data = request.data
+        user = request.user
+        product = Product.objects.get(id=pk)
+        quantity = data['quantity']
+        order = ClientOrder(user=user,product=product, quantity=quantity)
+        order.total_cost =  order.get_total_cost()
+        order.save()
+        return Response({'success':'success'})
