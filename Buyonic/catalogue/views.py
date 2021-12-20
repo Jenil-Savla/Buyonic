@@ -3,8 +3,8 @@ from rest_framework.decorators import api_view,permission_classes
 from . import Checksum
 
 from accounts.models import MyUser
-from .models import Product,ClientOrder,Notify,Transaction
-from .serializers import ProductSerializer,ClientOrderSerializer,NotifySerializer
+from .models import Product,ClientOrder,Notify,Transaction,ManufacturerOrder
+from .serializers import ProductSerializer,ClientOrderSerializer,NotifySerializer,ManufacturerOrderSerializer
 
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
@@ -61,9 +61,9 @@ class OrderForm(GenericAPIView):
     permission_classes = [IsAuthenticated,]
     queryset = ClientOrder.objects.all()
 
-    def get(self,request,pk):
+    def get(self,request):
         user = request.user
-        order_list = ClientOrder.objects.filter(user=user,confirmed=False)
+        order_list = ClientOrder.objects.filter(user=user,confirmed=True)
         serializer = self.serializer_class(order_list,many = True)
         return Response(serializer.data,status = status.HTTP_200_OK)
     
@@ -103,9 +103,8 @@ class NotifyMe(GenericAPIView):
     permission_classes = [IsAuthenticated,]
     queryset = Notify.objects.all()
 
-    def get(self,request,pk):
+    def get(self,request):
         user = request.user
-        product = Product.objects.get(id=pk)
         notify = Notify.objects.filter(user=user)
         for note in notify:
             if note.product.cost <= note.below:
@@ -179,7 +178,12 @@ def handlepayment(request):
             order_list = ClientOrder.objects.filter(user=user,confirmed=False)
             for item in order_list:
                 item.confirmed = True
+                m_order,k = ManufacturerOrder.objects.get_or_create(product = item.product, user = item.product.manufacturer, confirmed = False)
+                m_order.quantity += item.quantity
+                item.m_order = m_order
                 item.save()
+                m_order.save()
+
             print('order successful')
             #return render(request, 'paymentstatus.html', {'response': response_dict})
             return Response(response_dict)
@@ -187,3 +191,48 @@ def handlepayment(request):
             print('order was not successful because' + response_dict['RESPMSG'])
             #return render(request, 'paymentstatus.html', {'response': response_dict})
             return Response(response_dict)
+
+class ManufacturerOrderView(GenericAPIView):
+
+    serializer_class = ManufacturerOrderSerializer
+    permission_classes = [IsAuthenticated,]
+    queryset = ManufacturerOrder.objects.all()
+
+    def get(self,request,pk):
+        product = Product.objects.get(id = pk)
+        order = ManufacturerOrder.objects.get(product = product, confirmed = False)
+        order.total_cost = order.get_total_cost()
+        order.save()
+        serializer = self.serializer_class(instance = order)
+        return Response(serializer.data, status = status.HTTP_200_OK)
+
+    def post(self,request,pk):
+        data = request.data
+        product = Product.objects.get(id = pk)
+        order = ManufacturerOrder.objects.get(product = product, confirmed = False)
+        order.discount = data['discount']
+        order.final_payment = order.total_cost - int(order.discount)
+        order.confirmed = True
+        order.save()
+        c_list = ClientOrder.objects.filter(m_order = order, refunded = False)
+        for ins in c_list:
+                ins.user.refund_balance += (int(order.discount)/order.quantity)*ins.quantity
+                ins.refunded = True
+                ins.save()
+        serializer = self.serializer_class(instance = order)
+        return Response(serializer.data,status=status.HTTP_202_ACCEPTED)
+    
+class ManufacturerOrderList(GenericAPIView):
+
+    serializer_class = ManufacturerOrderSerializer
+    permission_classes = [IsAuthenticated,]
+    queryset = ManufacturerOrder.objects.all()
+
+    def get(self,request):
+        user = request.user
+        order = ManufacturerOrder.objects.filter(user = user, confirmed = False)
+        for item in order:
+            item.total_cost = item.get_total_cost()
+            item.save()
+        serializer = self.serializer_class(instance = order, many = True)
+        return Response(serializer.data, status = status.HTTP_200_OK)

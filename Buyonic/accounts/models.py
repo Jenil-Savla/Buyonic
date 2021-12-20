@@ -36,7 +36,7 @@ class MyUser(AbstractUser):
     city = models.CharField(max_length=25,null = True)
     state = models.CharField(max_length=25, null = True)
 
-    refund_balance = models.IntegerField(default = 0)
+    refund_balance = models.FloatField(default = 0)
     is_verified = models.BooleanField(default = False)
 
     is_manufacturer = models.BooleanField(default = False)

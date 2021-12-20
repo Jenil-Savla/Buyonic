@@ -14,7 +14,7 @@ class Product(models.Model):
     manufacturer = models.ForeignKey(MyUser, on_delete = models.CASCADE)
     category = models.ForeignKey(Category,on_delete = models.CASCADE)
     name = models.CharField(max_length = 25)
-    cost = models.IntegerField()
+    cost = models.FloatField()
     description = models.TextField(max_length = 100)
     stock_status = models.BooleanField(default = True)
     created_on = models.DateTimeField(auto_now_add = True)
@@ -28,13 +28,51 @@ class Product(models.Model):
     class Meta:
         ordering = ['-trend']
 
+
+class Notify(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    below = models.FloatField()
+    status = models.BooleanField(default = False)
+
+    def __str__(self):
+        return f"{self.product} < {self.below}"
+
+    class Meta:
+        verbose_name_plural = "Notifications"
+
+class Transaction(models.Model):
+    final_payment = models.FloatField()
+
+    def __str__(self):
+        return self.id
+
+class ManufacturerOrder(models.Model):
+    user = models.ForeignKey(MyUser,on_delete=models.CASCADE)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    quantity = models.IntegerField(default = 0)
+    total_cost = models.FloatField(default = 0)
+    discount = models.FloatField(default = 0)
+    confirmed = models.BooleanField(default = True)
+
+    final_payment = models.FloatField(default = 0)
+
+    def __str__(self):
+        return f"Rs {self.discount} on {self.product.name}"
+
+    def get_total_cost(self):
+        total_cost = int(self.quantity) * int(self.product.cost)
+        return int(total_cost)
+
 class ClientOrder(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    m_order = models.ForeignKey(ManufacturerOrder, on_delete=models.CASCADE)
     quantity = models.IntegerField(default = 1)
-    total_cost = models.IntegerField(default = 0)
-    shipping_charge = models.IntegerField(default = 50)
+    total_cost = models.FloatField(default = 0)
+    shipping_charge = models.FloatField(default = 50)
     confirmed = models.BooleanField(default = False)
+    refunded = models.BooleanField(default = False)
 
     def __str__(self):
         return f"{self.product} : {self.quantity}"
@@ -45,31 +83,3 @@ class ClientOrder(models.Model):
             total_cost -= int(self.user.refund_balance)
             self.user.refund_balance =0
         return int(total_cost)
-
-class Notify(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    below = models.IntegerField()
-    status = models.BooleanField(default = False)
-
-    def __str__(self):
-        return f"{self.product} < {self.below}"
-
-    class Meta:
-        verbose_name_plural = "Notifications"
-
-class Transaction(models.Model):
-    final_payment = models.IntegerField()
-
-    def __str__(self):
-        return self.id
-
-class ManufacturerOrder(models.Model):
-    user = models.ForeignKey(MyUser,on_delete=models.CASCADE)
-    product = models.ForeignKey(Product,on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-    total_price = models.IntegerField(default = 0)
-    discount = models.IntegerField(default = 0)
-
-    def __str__(self):
-        return f"{self.discount} % on {self.product.name}"
