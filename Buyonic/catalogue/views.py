@@ -150,7 +150,7 @@ class FinalOrder(GenericAPIView):
         'INDUSTRY_TYPE_ID': 'Retail',
         'WEBSITE': 'WEBSTAGING',
         'CHANNEL_ID': 'WEB',
-        'CALLBACK_URL': 'http://127.0.0.1:8000/product/handlepayment/',
+        'CALLBACK_URL': 'http://buyonic.herokuapp.com/product/handlepayment/',
     }
         param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict,'XV2__flY9OXt#O&M')#env('MERCHANTKEY'))
         return render(request,'checkout.html', context = param_dict)
