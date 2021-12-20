@@ -11,7 +11,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 	
 	class Meta:
 		model = MyUser
-		fields = ['email','password','name','contact','address']
+		fields = ['email','password','name','contact','address','city','state']
 		
 	def validate(self,attrs):
 		email = attrs.get('email',' ')
@@ -32,7 +32,7 @@ class LoginSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = MyUser
-		fields = ['email','name','contact','address','city','state','is_verified']
+		fields = ['email','name','contact','address','city','state','refund_balance','is_verified']
 
 	def validate_email(self, attrs):
 		user = self.context['request'].user
@@ -52,5 +52,7 @@ class UserSerializer(serializers.ModelSerializer):
 		instance.contact = validated_data['contact']
 		instance.address = validated_data['address']
 		instance.city = validated_data['city']
+		instance.city = validated_data['state']
+		instance.refund_balance = validated_data['refund_balance']
 		instance.save()
 		return instance
