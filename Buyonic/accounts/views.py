@@ -82,7 +82,7 @@ class Profile(GenericAPIView):
 
     permission_classes = [IsAuthenticated,]
     serializer_class = UserSerializer
-    queryset = MyUser.Objects.all()
+    queryset = MyUser.objects.all()
 
     def get(self,request):
         user = request.user
