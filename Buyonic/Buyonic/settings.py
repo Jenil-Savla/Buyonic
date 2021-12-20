@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'drf_yasg',
     'corsheaders',
 
+    'django_twilio',
+
     #myapps
     'accounts',
     'catalogue',
@@ -174,3 +176,6 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = env('EMAIL')
 EMAIL_HOST_PASSWORD = env('PASSWORD')
+
+TWILIO_ACCOUNT_SID = 'AC1da1978538820e0e44956e6698eb858c'
+TWILIO_AUTH_TOKEN = 'bc13c51bd08dd0ceda30945d74d1dc21'

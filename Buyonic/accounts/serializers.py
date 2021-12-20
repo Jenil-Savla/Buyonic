@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import MyUser
+from .models import MyUser,OTP
 
 import re
 
@@ -28,6 +28,11 @@ class LoginSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = MyUser
 		fields = ['email','password']
+
+class OTPSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = OTP
+		fields = ['otp',]
 
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:

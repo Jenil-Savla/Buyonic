@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate,login
 
-from .models import MyUser
-from .serializers import RegisterSerializer, LoginSerializer,UserSerializer
+from .models import OTP, MyUser
+from .serializers import OTPSerializer, RegisterSerializer, LoginSerializer,UserSerializer
 
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -13,6 +13,16 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from rest_framework.response import Response
 
+from twilio.rest import Client
+from django.conf import settings
+import random
+
+def send_text(request,number,otp):
+    client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN )
+    message = client.messages.create(body= f'Your OTP for buyonic is {otp}',
+        to ='+91'+str(number),
+        from_ ='+12346574691')
+    return('success')
 
 def send_email(data):
 		email = EmailMessage(subject = data['subject'], body = data['email_body'], to = [data['to']])
@@ -54,6 +64,32 @@ class LoginAPI(GenericAPIView):
 			token,k = Token.objects.get_or_create(user=user)
 			return Response({'token' : token.key},status = status.HTTP_200_OK)
 		return Response('Invalid Credentials',status = status.HTTP_404_NOT_FOUND)
+
+class OTPView(GenericAPIView):
+
+    serializer_class = OTPSerializer
+    permission_classes = [IsAuthenticated,]
+    queryset = OTP.objects.all()
+
+    def get(self,request):
+        user = request.user
+        one = random.randint(100000,999999)
+        otp = OTP.objects.create(otp = one,user = user)
+        serializer = self.serializer_class(instance=otp)
+        k = send_text(request,user.contact,one)
+        return Response('sent')
+
+    def post(self,request):
+        data = request.data
+        user = request.user
+        passw = OTP.objects.get(user=user)
+        print(passw.otp)
+        if data['otp'] == str(passw.otp):
+            passw.delete()
+            return Response({'success':'success'})
+        else:
+            passw.delete()
+            return Response({'failure':'failure'})
 
 class LogoutAPI(GenericAPIView):
 

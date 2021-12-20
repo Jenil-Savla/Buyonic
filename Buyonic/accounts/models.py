@@ -53,3 +53,7 @@ class MyUser(AbstractUser):
     def token(self):
         token = Token.objects.get(user=MyUser.objects.get(self.id))
         return token
+
+class OTP(models.Model):
+    user = models.ForeignKey(MyUser,on_delete=models.CASCADE)
+    otp = models.IntegerField()
