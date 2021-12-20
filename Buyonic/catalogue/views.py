@@ -171,7 +171,8 @@ def handlepayment(request):
             checksum = form[i]
 
         if i == 'ORDERID':
-            trans = Transaction.objects.get(id = form[i])
+            trans = Transaction.objects.get(id = int(form[i]))
+            trans.delete()
 ###
     verify = Checksum.verify_checksum(response_dict,'XV2__flY9OXt#O&M', checksum)
 
