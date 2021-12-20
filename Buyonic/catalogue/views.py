@@ -143,7 +143,7 @@ class FinalOrder(GenericAPIView):
             final_payment += item.total_cost
         transaction = Transaction.objects.create(final_payment=final_payment)
         param_dict = {
-        'MID': 'yZgcAx39951739640207',#env('MERCHANTID'),
+        'MID': env('MERCHANTID'),
         'ORDER_ID': str(transaction.id),
         'TXN_AMOUNT': str(final_payment),
         'CUST_ID': str(user.contact),
@@ -152,7 +152,7 @@ class FinalOrder(GenericAPIView):
         'CHANNEL_ID': 'WEB',
         'CALLBACK_URL': 'http://buyonic.herokuapp.com/product/handlepayment/',
     }
-        param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict,'XV2__flY9OXt#O&M')#env('MERCHANTKEY'))
+        param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict,env('MERCHANTKEY'))
         #return render(request,'checkout.html', context = param_dict)
         return Response(param_dict)
 
@@ -174,7 +174,7 @@ def handlepayment(request):
             trans = Transaction.objects.get(id = int(form[i]))
             trans.delete()
 ###
-    verify = Checksum.verify_checksum(response_dict,'XV2__flY9OXt#O&M', checksum)
+    verify = Checksum.verify_checksum(response_dict,env('MERCHANTKEY'), checksum)
 
     if verify:
         if response_dict['RESPCODE'] == '01':
