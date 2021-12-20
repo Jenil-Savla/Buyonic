@@ -40,6 +40,12 @@ class UserSerializer(serializers.ModelSerializer):
 			raise serializers.ValidationError({'email':'This email already exists.'})
 		return attrs
 
+	def validate_contact(self, attrs):
+		user = self.context['request'].user
+		if MyUser.objects.exclude(email = user.email).filter(contact=attrs).exists():
+			raise serializers.ValidationError({'contact':'This number already exists.'})
+		return attrs
+
 	def update(self,instance,validated_data):
 		instance.email = validated_data['email']
 		instance.name = validated_data['name']

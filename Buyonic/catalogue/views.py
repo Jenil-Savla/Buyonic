@@ -36,6 +36,7 @@ class ProductList(GenericAPIView):
     serializer_class = ProductSerializer
     pagination_class = PageNumberPagination
     permission_classes = [IsAuthenticated,]
+    queryset = Product.objects.all()
 
     def get(self,request):
         product = Product.objects.all()
@@ -45,6 +46,7 @@ class ProductList(GenericAPIView):
 class ProductDetails(GenericAPIView):
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated,]
+    queryset = Product.objects.all()
 
     def get(self,request,pk):
         product = Product.objects.get(id = pk)
@@ -144,15 +146,15 @@ class FinalOrder(GenericAPIView):
         'MID': 'yZgcAx39951739640207',#env('MERCHANTID'),
         'ORDER_ID': str(transaction.id),
         'TXN_AMOUNT': str(final_payment),
-        'CUST_ID': str(user.id),
+        'CUST_ID': str(user.contact),
         'INDUSTRY_TYPE_ID': 'Retail',
         'WEBSITE': 'WEBSTAGING',
         'CHANNEL_ID': 'WEB',
         'CALLBACK_URL': 'http://127.0.0.1:8000/product/handlepayment/',
     }
         param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict,'XV2__flY9OXt#O&M')#env('MERCHANTKEY'))
-        #return render(request,'checkout.html', context = param_dict)
-        return Response()
+        return render(request,'checkout.html', context = param_dict)
+        #return Response()
 
 @api_view(['POST'])
 @permission_classes((IsAuthenticated, ))
@@ -180,9 +182,9 @@ def handlepayment(request):
                 item.confirmed = True
                 item.save()
             print('order successful')
-            #return render(request, 'paymentstatus.html', {'response': response_dict})
-            return Response(response_dict)
+            return render(request, 'paymentstatus.html', {'response': response_dict})
+            #return Response(response_dict)
         else:
             print('order was not successful because' + response_dict['RESPMSG'])
-            #return render(request, 'paymentstatus.html', {'response': response_dict})
-            return Response(response_dict)
+            return render(request, 'paymentstatus.html', {'response': response_dict})
+            #return Response(response_dict)
