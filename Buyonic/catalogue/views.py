@@ -153,11 +153,11 @@ class FinalOrder(GenericAPIView):
         'CALLBACK_URL': 'http://buyonic.herokuapp.com/product/handlepayment/',
     }
         param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict,'XV2__flY9OXt#O&M')#env('MERCHANTKEY'))
-        return render(request,'checkout.html', context = param_dict)
-        #return Response()
+        #return render(request,'checkout.html', context = param_dict)
+        return Response()
 
 @api_view(['POST'])
-@permission_classes((IsAuthenticated, ))
+#@permission_classes((IsAuthenticated, ))
 def handlepayment(request):
     user = request.user
     checksum = ""
@@ -183,9 +183,9 @@ def handlepayment(request):
                 item.confirmed = True
                 item.save()
             print('order successful')
-            return render(request, 'paymentstatus.html', {'response': response_dict})
-            #return Response(response_dict)
+            #return render(request, 'paymentstatus.html', {'response': response_dict})
+            return Response(response_dict)
         else:
             print('order was not successful because' + response_dict['RESPMSG'])
-            return render(request, 'paymentstatus.html', {'response': response_dict})
-            #return Response(response_dict)
+            #return render(request, 'paymentstatus.html', {'response': response_dict})
+            return Response(response_dict)
