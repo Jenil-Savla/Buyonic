@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from .models import Product,Category,ClientOrder,Notify
 from accounts.models import MyUser
+from accounts.serializers import UserSerializer
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,6 +10,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProductSerializer(serializers.ModelSerializer):
+    manufacturer = UserSerializer()
     category = CategorySerializer()
     class Meta:
         model = Product

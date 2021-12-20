@@ -67,4 +67,9 @@ class Transaction(models.Model):
 class ManufacturerOrder(models.Model):
     user = models.ForeignKey(MyUser,on_delete=models.CASCADE)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
-    
+    quantity = models.IntegerField()
+    total_price = models.IntegerField(default = 0)
+    discount = models.IntegerField(default = 0)
+
+    def __str__(self):
+        return f"{self.discount} % on {self.product.name}"
