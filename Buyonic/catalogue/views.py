@@ -154,7 +154,7 @@ class FinalOrder(GenericAPIView):
     }
         param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict,'XV2__flY9OXt#O&M')#env('MERCHANTKEY'))
         #return render(request,'checkout.html', context = param_dict)
-        return Response()
+        return Response(param_dict)
 
 @api_view(['POST'])
 #@permission_classes((IsAuthenticated, ))
