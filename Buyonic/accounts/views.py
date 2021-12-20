@@ -1,11 +1,11 @@
 from django.contrib.auth import authenticate,login
 
 from .models import MyUser
-from .serializers import RegisterSerializer, LoginSerializer
-from rest_framework.views import APIView
+from .serializers import RegisterSerializer, LoginSerializer,UserSerializer
+
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework import status
+from rest_framework import status,mixins
 from rest_framework.authtoken.models import Token
 
 from django.core.mail import EmailMessage
@@ -13,10 +13,10 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from rest_framework.response import Response
 
-
+'''
 def send_email(data):
 		email = EmailMessage(subject = data['subject'], body = data['email_body'], to = [data['to']])
-		email.send()
+		email.send()'''
 
 class RegisterAPI(GenericAPIView):
     
@@ -77,3 +77,26 @@ class Waiting(GenericAPIView):
     permission_classes = [IsAuthenticated,]
     def get(self,request):
         return Response({'verified':request.user.is_verified})
+
+class Profile(GenericAPIView):
+
+    permission_classes = [IsAuthenticated,]
+    serializer_class = UserSerializer
+
+    def get(self,request):
+        user = request.user
+        serializer = self.serializer_class(instance=user)
+        return Response(serializer.data)
+
+    def put(self,request):
+        user = request.user
+        data = request.data
+        serializer = self.serializer_class(instance = user, context = {'request' : request},data = data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self,request):
+        user = request.user
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

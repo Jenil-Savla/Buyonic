@@ -28,3 +28,23 @@ class LoginSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = MyUser
 		fields = ['email','password']
+
+class UserSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = MyUser
+		fields = ['email','name','contact','address','city','state','is_verified']
+
+	def validate_email(self, attrs):
+		user = self.context['request'].user
+		if MyUser.objects.exclude(pk=user.pk).filter(email=attrs).exists():
+			raise serializers.ValidationError({'email':'This email already exists.'})
+		return attrs
+
+	def update(self,instance,validated_data):
+		instance.email = validated_data['email']
+		instance.name = validated_data['name']
+		instance.contact = validated_data['contact']
+		instance.address = validated_data['address']
+		instance.city = validated_data['city']
+		instance.save()
+		return instance
