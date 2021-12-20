@@ -141,7 +141,7 @@ class FinalOrder(GenericAPIView):
             final_payment += item.total_cost
         transaction = Transaction.objects.create(final_payment=final_payment)
         param_dict = {
-        'MID': env('MERCHANTID'),
+        'MID': 'yZgcAx39951739640207',#env('MERCHANTID'),
         'ORDER_ID': str(transaction.id),
         'TXN_AMOUNT': str(final_payment),
         'CUST_ID': str(user.id),
@@ -150,7 +150,7 @@ class FinalOrder(GenericAPIView):
         'CHANNEL_ID': 'WEB',
         'CALLBACK_URL': 'http://127.0.0.1:8000/product/handlepayment/',
     }
-        param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict, env('MERCHANTKEY'))#
+        param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict,'XV2__flY9OXt#O&M')#env('MERCHANTKEY'))
         #return render(request,'checkout.html', context = param_dict)
         return Response()
 
@@ -171,7 +171,7 @@ def handlepayment(request):
         if i == 'ORDERID':
             trans = Transaction.objects.get(id = id)
 ###
-    verify = Checksum.verify_checksum(response_dict,env('MERCHANTKEY'), checksum)
+    verify = Checksum.verify_checksum(response_dict,'XV2__flY9OXt#O&M', checksum)
 
     if verify:
         if response_dict['RESPCODE'] == '01':
@@ -180,9 +180,9 @@ def handlepayment(request):
                 item.confirmed = True
                 item.save()
             print('order successful')
-            #return render(request, 'paymentstatus.html', {'response': response_dict})
-            return Response(response_dict)
+            return render(request, 'paymentstatus.html', {'response': response_dict})
+            #return Response(response_dict)
         else:
             print('order was not successful because' + response_dict['RESPMSG'])
-            #return render(request, 'paymentstatus.html', {'response': response_dict})
-            return Response(response_dict)
+            return render(request, 'paymentstatus.html', {'response': response_dict})
+            #return Response(response_dict)
