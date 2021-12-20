@@ -33,8 +33,8 @@ class MyUser(AbstractUser):
     name = models.CharField(max_length=25)
     contact = models.BigIntegerField(unique = True,null = True)
     address = models.TextField(max_length = 100, null=True)
-    city = models.CharField(max_length=25)
-    state = models.CharField(max_length=25)
+    city = models.CharField(max_length=25,null = True)
+    state = models.CharField(max_length=25, null = True)
 
     refund_balance = models.IntegerField(default = 0)
     is_verified = models.BooleanField(default = False)

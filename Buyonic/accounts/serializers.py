@@ -52,7 +52,7 @@ class UserSerializer(serializers.ModelSerializer):
 		instance.contact = validated_data['contact']
 		instance.address = validated_data['address']
 		instance.city = validated_data['city']
-		instance.city = validated_data['state']
+		instance.state = validated_data['state']
 		instance.refund_balance = validated_data['refund_balance']
 		instance.save()
 		return instance

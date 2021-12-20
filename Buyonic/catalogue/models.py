@@ -63,3 +63,8 @@ class Transaction(models.Model):
 
     def __str__(self):
         return self.id
+
+class ManufacturerOrder(models.Model):
+    user = models.ForeignKey(MyUser,on_delete=models.CASCADE)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    
