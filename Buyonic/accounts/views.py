@@ -13,10 +13,10 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from rest_framework.response import Response
 
-'''
+
 def send_email(data):
 		email = EmailMessage(subject = data['subject'], body = data['email_body'], to = [data['to']])
-		email.send()'''
+		email.send()
 
 class RegisterAPI(GenericAPIView):
     
@@ -30,12 +30,12 @@ class RegisterAPI(GenericAPIView):
         user = serializer.save()
 		
         token = Token.objects.create(user=user)
-        '''
+        
         current_site = get_current_site(request).domain
         relative_link = reverse('email-verify')
         link = 'http://'+current_site+relative_link+'?token='+ token.key
         data = {'email_body': f'Use this link to get verified {link}. If you are a manufacturer then please mail us. We will contact you regarding same.', 'subject':'Email Verification', 'to' : user.email}
-        send_email(data)'''
+        send_email(data)
 
         return Response({'token' : token.key}
 		,status=status.HTTP_201_CREATED)
