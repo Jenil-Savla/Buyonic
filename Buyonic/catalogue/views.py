@@ -3,8 +3,6 @@
 import environ
 from rest_framework.decorators import api_view,permission_classes
 from . import Checksum
-import requests
-import json
 
 from accounts.models import MyUser
 from .models import Product,ClientOrder,Notify,Transaction
@@ -61,6 +59,7 @@ class OrderForm(GenericAPIView):
 
     serializer_class = ClientOrderSerializer
     permission_classes = [IsAuthenticated,]
+    queryset = ClientOrder.objects.all()
 
     def get(self,request,pk):
         user = request.user
@@ -102,6 +101,7 @@ class NotifyMe(GenericAPIView):
 
     serializer_class = NotifySerializer
     permission_classes = [IsAuthenticated,]
+    queryset = Notify.objects.all()
 
     def get(self,request,pk):
         user = request.user
@@ -180,9 +180,9 @@ def handlepayment(request):
                 item.confirmed = True
                 item.save()
             print('order successful')
-            return render(request, 'paymentstatus.html', {'response': response_dict})
-            #return Response(response_dict)
+            #return render(request, 'paymentstatus.html', {'response': response_dict})
+            return Response(response_dict)
         else:
             print('order was not successful because' + response_dict['RESPMSG'])
-            return render(request, 'paymentstatus.html', {'response': response_dict})
-            #return Response(response_dict)
+            #return render(request, 'paymentstatus.html', {'response': response_dict})
+            return Response(response_dict)
