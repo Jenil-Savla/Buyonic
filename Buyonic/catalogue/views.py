@@ -236,3 +236,4 @@ class ManufacturerOrderList(GenericAPIView):
             item.save()
         serializer = self.serializer_class(instance = order, many = True)
         return Response(serializer.data, status = status.HTTP_200_OK)
+

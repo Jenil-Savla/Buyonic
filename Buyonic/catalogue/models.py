@@ -17,7 +17,7 @@ class Product(models.Model):
     cost = models.FloatField()
     description = models.TextField(max_length = 100)
     stock_status = models.BooleanField(default = True)
-    created_on = models.DateTimeField(auto_now_add = True)
+    created_on = models.DateField(auto_created=True)
     photo = models.ImageField(blank = True)
     trend = models.IntegerField(default = 0)
     production_state = models.CharField(max_length=25)
