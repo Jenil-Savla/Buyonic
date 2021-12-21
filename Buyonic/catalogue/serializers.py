@@ -23,7 +23,7 @@ class ProductSerializer(serializers.ModelSerializer):
         return product
 
 class ClientOrderSerializer(serializers.ModelSerializer):
-
+    product = ProductSerializer()
     class Meta:
         model = ClientOrder
         fields = ['product','quantity','total_cost']

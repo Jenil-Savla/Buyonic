@@ -74,8 +74,9 @@ class OrderForm(GenericAPIView):
         quantity = data['quantity']
         order = ClientOrder(user=user,product=product, quantity=quantity)
         if product.production_state != user.state:
-            order.shipping += (0.1)*order.get_total_cost()
+            order.shipping_charge += (0.1)*order.get_total_cost()
         order.total_cost =  order.get_total_cost()
+        order.m_order = ManufacturerOrder.objects.get(id = 1)
         order.save()
         return Response({'success':'success'},status = status.HTTP_201_CREATED)
 
@@ -121,6 +122,23 @@ class NotifyMe(GenericAPIView):
         notification.save()
         return Response({'success':'success'})
 
+    def put(self, request,pk):
+        data = request.data
+        user = request.user
+        product = Product.objects.get(id=pk)
+        notification = Notify.objects.get(user=user,product=product)
+        notification.below = data.get('below')
+        notification.save()
+        return Response({'success': 'Item Updated successfully'}, status = status.HTTP_200_OK)	
+		
+    def delete(self, request,pk):
+        user = request.user
+        data = request.data
+        product = Product.objects.get(id=pk)
+        order_item = Notify.objects.get(user=user,product=product)
+        order_item.delete()
+        return Response({'success': 'Item Removed successfully'}, status = status.HTTP_202_ACCEPTED)
+
 class FinalOrder(GenericAPIView):
     serializer_class = ClientOrderSerializer
     permission_classes = [IsAuthenticated,]
@@ -147,7 +165,7 @@ class FinalOrder(GenericAPIView):
         'INDUSTRY_TYPE_ID': 'Retail',
         'WEBSITE': 'WEBSTAGING',
         'CHANNEL_ID': 'WEB',
-        'CALLBACK_URL': 'http://buyonic.herokuapp.com/product/handlepayment/',
+        'CALLBACK_URL': 'https://buyonic.herokuapp.com/product/handlepayment/',
     }
         param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict,env('MERCHANTKEY'))
         #return render(request,'checkout.html', context = param_dict)
