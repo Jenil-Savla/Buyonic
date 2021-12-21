@@ -168,8 +168,8 @@ class FinalOrder(GenericAPIView):
         'CALLBACK_URL': 'https://buyonic.herokuapp.com/product/handlepayment/',
     }
         param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict,env('MERCHANTKEY'))
-        #return render(request,'checkout.html', context = param_dict)
-        return Response(param_dict)
+        return render(request,'checkout.html', context = param_dict)
+        #return Response(param_dict)
 
 @api_view(['POST'])
 #@permission_classes((IsAuthenticated, ))
